@@ -1,12 +1,6 @@
 ---
-declared-services:
-  conversation-free:
-    label: conversation
-    plan: free
 applications:
-- services:
-  - conversation-free
-  name: sonny
+- name: Sonny
   command: npm start
   path: .
   instances: 1
