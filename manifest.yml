@@ -6,6 +6,7 @@ declared-services:
 applications:
 - services:
   - conversation-free
+  name: sonny
   command: npm start
   path: .
   instances: 1

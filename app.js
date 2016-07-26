@@ -37,9 +37,15 @@ var conversation = watson.conversation({
   version: 'v1'
 });
 
+var DEBUG = false;
+var weatherUtil = require('./lib/weatherUtil');
+var WU_API_KEY = process.env.WEATHER_UNDERGROUND_API_KEY || null;
+var DEBUG_UTIL = false;
+
 // Endpoint to be call from the client side
 app.post('/api/message', function(req, res) {
-  var workspace = process.env.WORKSPACE_ID || '<workspace-id>';
+  
+  var workspace = process.env.MINI_WORKSPACE_ID || '<workspace-id>';
   if (!workspace || workspace === '<workspace-id>') {
     return res.json({'output': {'text': 'The app has not been configured with a <b>WORKSPACE_ID</b> environment variable. Please refer to the ' +
     '<a href="https://github.com/watson-developer-cloud/conversation-simple">README</a> documentation on how to set this variable. <br>' +
@@ -64,39 +70,35 @@ app.post('/api/message', function(req, res) {
     if (err) {
       return res.status(err.code || 500).json(err);
     }
-    return res.json(updateMessage(data));
+    if(DEBUG) console.log(data.output.text);
+
+    if(data.output.action == 'get_weather')
+      makeWeatherRequest(data, function(responseText){
+        if(DEBUG) console.log(responseText);
+        
+        if(responseText instanceof Array)
+          data.output.text = responseText
+        else
+          data.output.text = [data.output.text[data.output.text.length - 1], responseText];
+        
+        res.json(data);
+      });
+    else{
+      data.output.text = data.output.text[data.output.text.length - 1];
+      res.json(data);
+    }
   });
 });
 
-/**
- * Updates the response text using the intent confidence
- * @param  {Object} response The response from the Conversation service
- * @return {Object}          The response with the updated message
- */
-function updateMessage(response) {
-  var responseText = null;
-  if (!response.output) {
-    response.output = {};
-  } else {
-    return response;
-  }
-  if (response.intents && response.intents[0]) {
-    var intent = response.intents[0];
-    // Depending on the confidence of the response the app can return different messages.
-    // The confidence will vary depending on how well the system is trained. The service will always try to assign
-    // a class/intent to the input. If the confidence is low, then it suggests the service is unsure of the
-    // user's intent . In these cases it is usually best to return a disambiguation message
-    // ('I did not understand your intent, please rephrase your question', etc..)
-    if (intent.confidence >= 0.75) {
-      responseText = 'I understood your intent was ' + intent.intent;
-    } else if (intent.confidence >= 0.5) {
-      responseText = 'I think your intent was ' + intent.intent;
-    } else {
-      responseText = 'I did not understand your intent';
-    }
-  }
-  response.output.text = responseText;
-  return response;
+function makeWeatherRequest(data, callback){
+	weatherUtil.makeWeatherRequest(WU_API_KEY, data.context.condition, data.context.city, data.context.state, data.context.date, DEBUG_UTIL, function(weather_reply){
+      if(weather_reply.ask) {
+        data.context.asked_state = true;
+        data.context.options = weather_reply.options;
+        callback(weather_reply.ask);
+      } else
+        callback(weather_reply.tell);
+  });
 }
 
 module.exports = app;
