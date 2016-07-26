@@ -16,12 +16,13 @@
 
 'use strict';
 
+// Dependencies
 require('dotenv').config({silent: true});
-
 var express = require('express');  // app server
 var bodyParser = require('body-parser');  // parser for post requests
 var watson = require('watson-developer-cloud');  // watson sdk
 
+// Express application
 var app = express();
 
 // Bootstrap application settings
@@ -37,12 +38,13 @@ var conversation = watson.conversation({
   version: 'v1'
 });
 
-var DEBUG = false;
-var weatherUtil = require('./lib/weatherUtil');
-var WU_API_KEY = process.env.WEATHER_UNDERGROUND_API_KEY || null;
-var DEBUG_UTIL = false;
+// App-specific settings
+var DEBUG = false;  // Debug the app (excluding the Weather Underground Util)
+var weatherUtil = require('./lib/weatherUtil'); // Require the Weather Underground Util
+var WU_API_KEY = process.env.WEATHER_UNDERGROUND_API_KEY || null; // Get Weather Underground API key from the .env file
+var DEBUG_UTIL = false; // Debug the Weather Underground Util
 
-// Endpoint to be call from the client side
+// Endpoint to be called from the client side
 app.post('/api/message', function(req, res) {
   
   var workspace = process.env.MINI_WORKSPACE_ID || '<workspace-id>';
@@ -67,37 +69,52 @@ app.post('/api/message', function(req, res) {
   }
   // Send the input to the conversation service
   conversation.message(payload, function(err, data) {
-    if (err) {
+    
+    if (err) {  // return error if any
       return res.status(err.code || 500).json(err);
     }
     if(DEBUG) console.log(data.output.text);
 
-    if(data.output.action == 'get_weather')
-      makeWeatherRequest(data, function(responseText){
+    if(data.output.action == 'get_weather')             // if Watson Conversation set output.action to 'get_weather',
+      makeWeatherRequest(data, function(responseText){    // then make a weather request using the JSON data, and get the responseText to display
         if(DEBUG) console.log(responseText);
         
-        if(responseText instanceof Array)
-          data.output.text = responseText
-        else
-          data.output.text = [data.output.text[data.output.text.length - 1], responseText];
+        /**
+         * We can display multiple separate text lines in the app,
+         * so set data.output.text to be an array of strings
+         * if the responseText is already an array, then just set that to be the output
+         * else if the responseText is a string:
+         *  - take the last element from data.output.text (Which states the intent and entities that Watson Conversation inferred)
+         *  - and tack on responseText so that those two lines are displayed in the chat response
+         */
+        if(responseText instanceof Array) data.output.text = responseText
+        else data.output.text = [data.output.text[data.output.text.length - 1], responseText];
         
-        res.json(data);
+        res.json(data); // respond with the JSON data
       });
-    else{
-      data.output.text = data.output.text[data.output.text.length - 1];
-      res.json(data);
+
+    else{                                                               // if we are not yet ready to get the weather, (i.e. still in the dialog)
+      data.output.text = data.output.text[data.output.text.length - 1];   // then set the output to be the last element in the array of output text strings
+      res.json(data);                                                     // and respond with the JSON data
     }
   });
 });
 
+/**
+ * Function to make the weather request
+ * @param {HashMap} data: contains the parameters to be used in the weather request, contained in the context field 
+ * @param {Function} callback: to be called when we have the response from the weather util
+ */
 function makeWeatherRequest(data, callback){
-	weatherUtil.makeWeatherRequest(WU_API_KEY, data.context.condition, data.context.city, data.context.state, data.context.date, DEBUG_UTIL, function(weather_reply){
-      if(weather_reply.ask) {
-        data.context.asked_state = true;
-        data.context.options = weather_reply.options;
-        callback(weather_reply.ask);
-      } else
-        callback(weather_reply.tell);
+	weatherUtil.makeWeatherRequest(WU_API_KEY, data.context.condition, data.context.city, data.context.state, data.context.date, DEBUG_UTIL, 
+
+  function(weather_reply){                      // callback function called from the weatherUtil
+    if(weather_reply.ask) {                       // if we need to ask the user a question
+      data.context.asked_state = true;              // set the asked_state context varaible to true
+      data.context.options = weather_reply.options; // set the options of what to ask (TODO: use in Watson Conversation Dialog)
+      callback(weather_reply.ask);                  // call the callback function with the output text (weather_reply.ask)
+    } else                                        // if don't need to ask a question,
+      callback(weather_reply.tell);                 // call the callback function with the output text (weather_reply.tell)
   });
 }
 

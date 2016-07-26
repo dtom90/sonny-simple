@@ -1,8 +1,7 @@
-# Conversation Sample Application
-[![Build Status](https://travis-ci.org/watson-developer-cloud/conversation-simple.svg?branch=master)](http://travis-ci.org/watson-developer-cloud/conversation-simple)
-[![codecov.io](https://codecov.io/github/watson-developer-cloud/conversation-simple/coverage.svg?branch=master)](https://codecov.io/github/watson-developer-cloud/conversation-simple?branch=master)
+# Weather Underground Watson
 
-This application demonstrates how the Conversation service uses intent capabilities in a simple chat interface.
+This application allows for users to have a conversation with Sonny the weather bot in a simple chat interface.
+It uses the Watson Conversation service for natural language understanding and the Weather Underground API for looking up weather information 
 
 [See the app demo](http://conversation-simple.mybluemix.net/).
 
@@ -137,7 +136,9 @@ To build the application:
 
   The application uses [Node.js](http://nodejs.org/) and [npm](https://www.npmjs.com/).
 
-1 Copy the credentials from your `conversation-service` service in Bluemix to a `.env` file in the root.
+1 Copy the credentials from your `conversation-service` service in Bluemix to a file named `.env` in the root. (you can copy the file `.env.example` to `.env` and enter the appropriate variables)
+  - In order to get weather data, you must register for a Weather Underground API key at https://www.wunderground.com/weather/api/
+  - Then you can paste that key into `WEATHER_UNDERGROUND_API_KEY=<your Weather Underground API key>` in your `.env` file
 
 2 Use the Conversation tooling app to [import a workspace](#workspace) and add the workspace ID environment variable to the `.env` file. For details about obtaining the workspace ID, see Step 5 in the workspace section.
 
