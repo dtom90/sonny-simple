@@ -1,6 +1,6 @@
 ---
 applications:
-- name: Sonny
+- name: Sonny the Weather Bot
   command: npm start
   path: .
   instances: 1

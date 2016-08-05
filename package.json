@@ -1,6 +1,6 @@
 {
-  "name": "conversation-simple",
-  "description": "A simple Node.js based web app which shows how to use the Conversation API to recognize user intents.",
+  "name": "sonny-weather-bot",
+  "description": "A simple Node.js based web app which uses the Watson Conversation and Weather Underground APIs to answer weather-related questions.",
   "version": "0.1.1",
   "main": "server.js",
   "scripts": {
