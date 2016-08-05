@@ -42,7 +42,7 @@ var conversation = watson.conversation({
 var DEBUG = process.env.DEBUG == 'true' || false;  // Debug the app (excluding the Weather Underground Util)
 var weatherUtil = require('./lib/weatherUtil'); // Require the Weather Underground Util
 var WU_API_KEY = process.env.WEATHER_UNDERGROUND_API_KEY || null; // Get Weather Underground API key from the .env file
-var DEBUG_UTIL = true; // Debug the Weather Underground Util
+var DEBUG_UTIL = process.env.DEBUG_UTIL == 'true' || false; // Debug the Weather Underground Util
 
 // Endpoint to be called from the client side
 app.post('/api/message', function(req, res) {
@@ -112,9 +112,7 @@ function makeWeatherRequest(data, callback){
   
   if (data.context.state && data.context.state instanceof Array){
     var state = null;
-    console.log(data.context.state);
     var state_city_mismatches = data.context.state.filter(function (x){ return x.value != data.context.city });  // get the number of states that do not match the city
-    console.log(state_city_mismatches);
     if(state_city_mismatches.length > 0)
       state = state_city_mismatches[state_city_mismatches.length-1].value;
     else {
