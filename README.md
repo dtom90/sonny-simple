@@ -1,9 +1,9 @@
-# Weather Underground Watson
+# Sonny the Weather Bot
 
 This application allows for users to have a conversation with Sonny the weather bot in a simple chat interface.
 It uses the Watson Conversation service for natural language understanding and the Weather Underground API for looking up weather information 
 
-[See the app demo](http://conversation-simple.mybluemix.net/).
+[See the app demo](http://sonny.mybluemix.net/).
 
 For more information about Conversation, see the [detailed documentation](http://www.ibm.com/watson/developercloud/doc/conversation/overview.shtml).
 
@@ -13,21 +13,22 @@ For more information about Conversation, see the [detailed documentation](http:/
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<img src="readme_images/bluemix.png" width="200"/>](#bluemix)     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<img src="readme_images/local.png" width="200"/>](#local)
 
 ## How the app works
-The app interface is designed and trained for chatting with a cognitive car. The chat interface is on the left, and the
+The app interface is designed and trained for chatting about the weather. The chat interface is on the left, and the
 JSON that the JavaScript code receives from the server is on the right. Your questions and commands are run against a small set of sample data trained with intents like these:
 
-    turn_on
-    weather
-    capabilities
+    Weather
+    Temperature
+    Rain
+    SmallTalkGreeting
 
 These intents help the system to understand variations of questions and commands that you might submit.
 
 Example commands that can be executed by the Conversation service are: 
 
-    turn on windshield wipers
-    play music
+    What is the weather like in San Francisco?
+    Is it raining right now in Seattle?
 
-If you say *"Wipers on"* or *"I want to turn on the windshield wipers"*, the system
+If you say *"Weather Baltimore"* or *"Tell me what the weather is like in Baltimore right now"*, the system
 understands that in both cases your intent is the same and responds accordingly.
 
 <a name="bluemix">
@@ -48,7 +49,7 @@ understands that in both cases your intent is the same and responds accordingly.
 ## Deploy the App
 1 Select Deploy to Bluemix.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/watson-developer-cloud/conversation-simple)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/dlthomas/sonny-watson)
 
 2 Log in with an existing Bluemix account or sign up.
 
@@ -94,9 +95,9 @@ To build the application:
 
 1 Download and install the [Cloudfoundry CLI](https://github.com/cloudfoundry/cli) tool.
 
-2 Git clone the project `https://github.com/watson-developer-cloud/conversation-simple`
+2 Git clone the project `https://github.ibm.com/dlthomas/sonny-watson`
 
-3 Navigate to the `conversation-simple` folder
+3 Navigate to the `sonny-watson` folder
 
 4 Edit the `manifest.yml` file, and change the `<application-name>` to something unique.
   ```none
@@ -181,7 +182,7 @@ For more information on workspaces, see the full  [Conversation service  documen
 
 2 Go to the **Manage** menu item and select **Launch Tool**. This opens a new tab in your browser, where you are prompted to login if you have not done so before. Use your Bluemix credentials.
 
-3 If you are deploying through Bluemix, download the [exported JSON file](https://raw.githubusercontent.com/watson-developer-cloud/conversation-simple/master/training/car_workspace.json) that contains the Workspace contents. If deploying locally,  this was cloned and is in the training folder (training/car_workspace.json).
+3 If you are deploying through Bluemix, download the [exported JSON file](https://raw.githubusercontent.com/dlthomas/sonny-watson/master/training/Sonny.json) that contains the Workspace contents. If deploying locally,  this was cloned and is in the training folder (training/Sonny.json).
 
 4 Select the import icon: ![](readme_images/importGA.PNG). Browse to (or drag and drop) the JSON file. Choose to import **Everything(Intents, Entities, and Dialog)**. Then select **Import** to finish importing the workspace.
 
