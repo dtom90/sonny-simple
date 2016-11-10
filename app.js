@@ -87,7 +87,7 @@ app.post('/api/message', function(req, res) {
          *  - take the last element from data.output.text (Which states the intent and entities that Watson Conversation inferred)
          *  - and tack on responseText so that those two lines are displayed in the chat response
          */
-        if(responseText instanceof Array) data.output.text = responseText
+        if(responseText instanceof Array) data.output.text = responseText;
         else data.output.text = [data.output.text[data.output.text.length - 1], responseText];
         
         res.json(data); // respond with the JSON data
